@@ -57,7 +57,6 @@ const rectWidth = width;
 const rectX = xOffset + i * (width + blockMargin);
 const rectY = svgHeight - yOffset - rectHeight;
 
-// Create block (black)
 const blockRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
 blockRect.setAttribute('x', rectX);
 blockRect.setAttribute('y', rectY);
@@ -67,28 +66,17 @@ blockRect.setAttribute('fill', '#000000');
 
 svg.appendChild(blockRect);
 
-// Calculate water height
 const waterHeight = Math.min(blocks[i], waterUnits / width);
 const waterRectHeight = waterHeight * heightFactor;
 
-// Create water (blue)
-const waterRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-waterRect.setAttribute('x', rectX);
-waterRect.setAttribute('y', svgHeight - yOffset - waterRectHeight);
-waterRect.setAttribute('width', rectWidth);
-waterRect.setAttribute('height', waterRectHeight);
-waterRect.setAttribute('fill', '#3498db');
-
-svg.appendChild(waterRect);
 }
 
 visualizationContainer.appendChild(svg);
 
-const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-text.setAttribute('x', svgWidth / 2);
-text.setAttribute('y', svgHeight - 10);
-text.setAttribute('text-anchor', 'middle');
-text.textContent = `Water units: ${waterUnits}`;
+const waterUnitsElement = document.createElement('div');
+waterUnitsElement.classList.add('water-units');
+waterUnitsElement.textContent = `Water units: ${waterUnits}`;
+visualizationContainer.appendChild(waterUnitsElement);
 
 svg.appendChild(text);
 }
