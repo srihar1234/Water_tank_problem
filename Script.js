@@ -5,78 +5,72 @@ function calculateWater() {
   visualizeWater(blocks, waterUnits);
 }
 
+
 function calculateWaterUnits(blocks) {
-  let leftMax = 0;
-  let rightMax = 0;
-  let waterUnits = 0;
+    let waterUnits = 0;
 
-  let left = 0;
-  let right = blocks.length - 1;
-
-  while (left < right) {
-      if (blocks[left] < blocks[right]) {
-          if (blocks[left] > leftMax) {
-              leftMax = blocks[left];
-          } else {
-              waterUnits += leftMax - blocks[left];
-          }
-          left++;
-      } else {
-          if (blocks[right] > rightMax) {
-              rightMax = blocks[right];
-          } else {
-              waterUnits += rightMax - blocks[right];
-          }
-          right--;
-      }
+    const leftMax = [];
+    const rightMax = [];
+    leftMax[0] = blocks[0];
+    rightMax[blocks.length - 1] = blocks[blocks.length - 1];
+    for (let i = 1; i < blocks.length; i++) {
+      leftMax[i] = Math.max(leftMax[i - 1], blocks[i]);
+      rightMax[blocks.length - 1 - i] = Math.max(rightMax[blocks.length - i], blocks[blocks.length - 1 - i]);
+    }
+  
+    for (let i = 0; i < blocks.length; i++) {
+      const minMax = Math.min(leftMax[i], rightMax[i]);
+      waterUnits += Math.max(minMax - blocks[i], 0);
+    }
+  
+    return waterUnits;
   }
-  return waterUnits;
-}
+  
 
-function visualizeWater(blocks, waterUnits) {
-const visualizationContainer = document.getElementById('visualization');
-visualizationContainer.innerHTML = '';
+  function visualizeWater(blocks, waterUnits) {
+    const visualizationContainer = document.getElementById('visualization');
+    visualizationContainer.innerHTML = '';
+  
+    const maxBlockHeight = Math.max(...blocks);
+    const table = document.createElement('table');
+    table.classList.add('visualization-table');
+    table.style.width = '80%'; 
+  
+    const tableHeight = (maxBlockHeight + 1) * 40; 
+    table.style.height = `${tableHeight}px`;
+  
+  
+    table.style.borderCollapse = 'collapse';
+    table.style.borderSpacing = '0';
+  
 
-const width = 30;
-const heightFactor = 20;
-const xOffset = 10;
-const yOffset = 10;
-const blockMargin = 5;
+    for (let i = maxBlockHeight; i >= 0; i--) {
+      const row = document.createElement('tr');
+      row.classList.add('row');
+      
+ 
+      for (let j = 0; j < blocks.length; j++) {
+        const cell = document.createElement('td');
+        cell.classList.add('cell');
 
-const svgWidth = (width + blockMargin) * blocks.length + xOffset * 2;
-const svgHeight = Math.max(...blocks) * heightFactor + yOffset * 2;
+        cell.style.border = '1px solid #000000';
+        
+  
+        if (blocks[j] >= i) {
+          cell.style.backgroundColor = '#808080'; 
+        }
+        
+        row.appendChild(cell);
+      }
+      
+      table.appendChild(row);
+    }
+  
+    visualizationContainer.appendChild(table);
+  
+    const waterUnitsElement = document.createElement('div');
+    waterUnitsElement.classList.add('water-units');
+    waterUnitsElement.textContent = `Water units: ${waterUnits} units`;
+    visualizationContainer.appendChild(waterUnitsElement);
+  }
 
-const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-svg.setAttribute('width', svgWidth);
-svg.setAttribute('height', svgHeight);
-
-for (let i = 0; i < blocks.length; i++) {
-const rectHeight = blocks[i] * heightFactor;
-const rectWidth = width;
-
-const rectX = xOffset + i * (width + blockMargin);
-const rectY = svgHeight - yOffset - rectHeight;
-
-const blockRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-blockRect.setAttribute('x', rectX);
-blockRect.setAttribute('y', rectY);
-blockRect.setAttribute('width', rectWidth);
-blockRect.setAttribute('height', rectHeight);
-blockRect.setAttribute('fill', '#000000');
-
-svg.appendChild(blockRect);
-
-const waterHeight = Math.min(blocks[i], waterUnits / width);
-const waterRectHeight = waterHeight * heightFactor;
-
-}
-
-visualizationContainer.appendChild(svg);
-
-const waterUnitsElement = document.createElement('div');
-waterUnitsElement.classList.add('water-units');
-waterUnitsElement.textContent = `Water units: ${waterUnits}`;
-visualizationContainer.appendChild(waterUnitsElement);
-
-svg.appendChild(text);
-}
