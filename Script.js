@@ -26,43 +26,68 @@ function calculateWaterUnits(blocks) {
     return waterUnits;
   }
   
-
-  function visualizeWater(blocks, waterUnits) {
+function visualizeWater(blocks, waterUnits) {
     const visualizationContainer = document.getElementById('visualization');
     visualizationContainer.innerHTML = '';
   
     const maxBlockHeight = Math.max(...blocks);
     const table = document.createElement('table');
     table.classList.add('visualization-table');
-    table.style.width = '80%'; 
+    table.style.width = '80%';
   
-    const tableHeight = (maxBlockHeight + 1) * 40; 
+    const tableHeight = (maxBlockHeight + 1) * 40;
     table.style.height = `${tableHeight}px`;
-  
   
     table.style.borderCollapse = 'collapse';
     table.style.borderSpacing = '0';
   
-
+    const lastBlockIndex = new Array(blocks.length).fill(-1);
+  
+    for (let i = 0; i < blocks.length; i++) {
+      if (blocks[i] > 0) {
+        lastBlockIndex[blocks[i]] = i;
+      }
+    }
+  
     for (let i = maxBlockHeight; i >= 0; i--) {
       const row = document.createElement('tr');
       row.classList.add('row');
-      
- 
+  
+      let startIndex = -1;
+  
       for (let j = 0; j < blocks.length; j++) {
         const cell = document.createElement('td');
         cell.classList.add('cell');
-
         cell.style.border = '1px solid #000000';
-        
   
         if (blocks[j] >= i) {
-          cell.style.backgroundColor = '#808080'; 
+          cell.style.backgroundColor = 'transparent';
+          cell.style.transition = 'background-color 0.5s';
+          setTimeout(() => {
+            cell.style.backgroundColor = '#808080';
+          }, 100 * j);
+  
+          if (startIndex !== -1) {
+            const endIndex = j;
+  
+            for (let k = startIndex + 1; k < endIndex; k++) {
+              const aquaCell = row.children[k];
+              aquaCell.style.backgroundColor = 'transparent';
+              aquaCell.style.transition = 'background-color 0.5s';
+              setTimeout(() => {
+                aquaCell.style.backgroundColor = 'aqua';
+              }, 100 * j);
+            }
+  
+            startIndex = endIndex;
+          } else {
+            startIndex = j;
+          }
         }
         
         row.appendChild(cell);
       }
-      
+  
       table.appendChild(row);
     }
   
@@ -73,4 +98,6 @@ function calculateWaterUnits(blocks) {
     waterUnitsElement.textContent = `Water units: ${waterUnits} units`;
     visualizationContainer.appendChild(waterUnitsElement);
   }
-
+  
+  
+  
