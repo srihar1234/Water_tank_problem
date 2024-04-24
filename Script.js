@@ -75,7 +75,7 @@ function visualizeWater(blocks, waterUnits) {
               aquaCell.style.backgroundColor = 'transparent';
               aquaCell.style.transition = 'background-color 0.5s';
               setTimeout(() => {
-                aquaCell.style.backgroundColor = 'aqua';
+                aquaCell.style.backgroundColor = 'blue';
               }, 100 * j);
             }
   
@@ -98,6 +98,5 @@ function visualizeWater(blocks, waterUnits) {
     waterUnitsElement.textContent = `Water units: ${waterUnits} units`;
     visualizationContainer.appendChild(waterUnitsElement);
   }
-  
   
   
